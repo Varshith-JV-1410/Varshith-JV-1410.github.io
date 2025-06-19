@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Varshith Jakkaraju | Architect of Intelligent Experiences</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter and IBM Plex Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Three.js for 3D Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        /* Define custom theme colors and fonts */
+        body {
+            background-color: #0A0F1E; /* Midnight Protocol: Primary Background */
+            color: #E1E1E6; /* Midnight Protocol: Primary Text */
+            font-family: 'Inter', sans-serif;
+        }
+        .font-mono-plex {
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        .accent-color {
+            color: #00F5D4; /* Midnight Protocol: Primary Accent */
+        }
+        .bg-accent-color {
+            background-color: #00F5D4;
+        }
+        .border-accent-color {
+            border-color: #00F5D4;
+        }
+        .glass-effect {
+            background: rgba(16, 22, 42, 0.6); /* Slightly lighter than bg for visibility */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(225, 225, 230, 0.1);
+        }
+        /* Style for the 3D project card hover effect */
+        .project-card {
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .project-card:hover {
+            transform: perspective(1000px) rotateY(5deg) rotateX(10deg) scale(1.05);
+        }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0F1E;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00F5D4;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00bfa5;
+        }
+        /* Animation for section fade-in */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Styles for certificate modal */
+        #certificate-modal.flex {
+            display: flex;
+        }
+        #modal-close-button {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header Navigation -->
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold tracking-tighter">
+                Varshith J.
+            </a>
+            <div class="hidden md:flex items-center space-x-6 lg:space-x-8 text-sm lg:text-base">
+                <a href="#about" class="hover:text-cyan-300 transition-colors">About</a>
+                <a href="#skills" class="hover:text-cyan-300 transition-colors">Skills</a>
+                <a href="#projects" class="hover:text-cyan-300 transition-colors">Projects</a>
+                <a href="#certifications" class="hover:text-cyan-300 transition-colors">Certifications</a>
+                <a href="#achievements" class="hover:text-cyan-300 transition-colors">Achievements</a>
+                <a href="#contact" class="px-4 py-2 border border-cyan-400 text-cyan-400 rounded-md hover:bg-cyan-400 hover:text-gray-900 transition-all duration-300">Contact</a>
+            </div>
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+    </header>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-40 glass-effect">
+        <div class="flex flex-col items-center justify-center h-full space-y-8 text-2xl">
+            <a href="#about" class="mobile-menu-link">About</a>
+            <a href="#skills" class="mobile-menu-link">Skills</a>
+            <a href="#projects" class="mobile-menu-link">Projects</a>
+            <a href="#certifications" class="mobile-menu-link">Certifications</a>
+            <a href="#achievements" class="mobile-menu-link">Achievements</a>
+            <a href="#contact" class="mobile-menu-link">Contact</a>
+        </div>
+    </div>
+
+
+    <main class="container mx-auto px-6">
+        <!-- Hero Section -->
+        <section id="hero" class="relative h-screen flex flex-col justify-center items-center text-center -mt-16">
+            <!-- This canvas is for the 3D background animation -->
+            <canvas id="hero-canvas" class="absolute top-0 left-0 w-full h-full z-0"></canvas>
+            
+            <div class="relative z-10 p-4">
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-none">
+                    Architect of <span class="accent-color">Intelligent</span> Experiences
+                </h1>
+                <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-300">
+                    Building the future of digital interaction, where robust backend engineering meets intuitive, user-centric design.
+                </p>
+                <a href="#projects" class="mt-10 inline-block px-8 py-4 bg-accent-color text-gray-900 font-bold rounded-lg hover:scale-105 transform transition-transform duration-300">
+                    View My Work
+                </a>
+            </div>
+        </section>
+
+        <!-- About Me Section -->
+        <section id="about" class="py-20 lg:py-32 fade-in-section">
+            <div class="grid md:grid-cols-5 gap-10 lg:gap-20 items-center">
+                <div class="md:col-span-2">
+                    <div class="p-2 border-2 border-dashed border-cyan-400/50 rounded-xl">
+                        <img src="1.jpg" 
+                             alt="Varshith Jakkaraju" 
+                             class="rounded-lg w-full h-auto"
+                             onerror="this.onerror=null;this.src='https://placehold.co/600x600/0A0F1E/E1E1E6?text=Image+Not+Found';">
+                    </div>
+                </div>
+                <div class="md:col-span-3">
+                    <h2 class="text-3xl lg:text-4xl font-bold mb-4">About Me</h2>
+                    <p class="text-lg text-gray-300 mb-4">
+                        My journey in technology is driven by a dual passion: crafting robust, scalable systems and applying design thinking to solve meaningful user problems. I believe the most powerful digital products emerge at the intersection of elegant code and intuitive human experience.
+                    </p>
+                    <p class="text-lg text-gray-300">
+                        With a foundation in Java and backend development, I focus on building the architectural backbone of applications while keeping an eye on the bigger picture—creating technology that is not just functional, but also a pleasure to use. My explorations into AI concepts and interactive media fuel my vision for a more intelligent, responsive digital future.
+                    </p>
+                    <div class="mt-8 flex space-x-4">
+                        <a href="https://www.linkedin.com/in/jakkaraju-varshith/" target="_blank" class="text-gray-400 hover:text-cyan-400 transition-colors"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                        <a href="https://github.com/Varshith-JV-1410/" target="_blank" class="text-gray-400 hover:text-cyan-400 transition-colors"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+                        <a href="https://www.credly.com/users/varshith-jakkaraju.3a258dc7" target="_blank" class="text-gray-400 hover:text-cyan-400 transition-colors"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M21.583,6.563H19.75V4.73a.47.47,0,0,0-.47-.47H4.72a.47.47,0,0,0-.47.47V19.27a.47.47,0,0,0,.47.47H19.28a.47.47,0,0,0,.47-.47V17.437h1.833a.417.417,0,0,0,.417-.417V6.98A.417.417,0,0,0,21.583,6.563Zm-2.25,9.375H4.667a.833.833,0,0,1-.834-.833V5.167a.833.833,0,0,1,.834-.834H19.333a.833.833,0,0,1,.834.833v2.5H18.5a.833.833,0,0,0-.833.833v4.167a.833.833,0,0,0,.833.833h1.667Z M12,14.042a1.958,1.958,0,1,1,1.958-1.958A1.96,1.96,0,0,1,12,14.042Z M12,7.25A4.833,4.833,0,1,0,16.833,12.083,4.838,4.838,0,0,0,12,7.25Z"/></svg></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section - Bento Grid -->
+        <section id="skills" class="py-20 lg:py-32 fade-in-section">
+            <h2 class="text-3xl lg:text-4xl font-bold text-center mb-12">My Toolkit</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <div class="glass-effect rounded-2xl p-6 col-span-2 row-span-2">
+                    <h3 class="text-xl font-bold mb-2 accent-color">Core Engineering</h3>
+                    <p class="text-gray-300 mb-4">Building reliable and scalable software foundations.</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">Java</span>
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">Spring Boot</span>
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">Databases (SQL/NoSQL)</span>
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">APIs (REST)</span>
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">Microservices</span>
+                    </div>
+                </div>
+                <div class="glass-effect rounded-2xl p-6 col-span-2">
+                    <h3 class="text-xl font-bold mb-2 accent-color">Design & Architecture</h3>
+                    <p class="text-gray-300">Applying user-centric principles to solve business problems.</p>
+                     <div class="flex flex-wrap gap-2 mt-4">
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">System Design</span>
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">Design Thinking</span>
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">Prototyping</span>
+                    </div>
+                </div>
+                <div class="glass-effect rounded-2xl p-6 col-span-2">
+                    <h3 class="text-xl font-bold mb-2 accent-color">Future-Forward Explorations</h3>
+                    <p class="text-gray-300">Engaging with the next wave of technology.</p>
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">AI/ML Concepts</span>
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">Interactive Media (Three.js)</span>
+                        <span class="bg-gray-700/50 text-cyan-300 text-sm font-medium px-3 py-1 rounded-full">Data Visualization</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 lg:py-32 fade-in-section">
+            <h2 class="text-3xl lg:text-4xl font-bold text-center mb-12">Featured Projects</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="glass-effect rounded-2xl overflow-hidden project-card group">
+                    <img src="https://placehold.co/600x400/0A0F1E/00F5D4?text=Project+One" 
+                         alt="Project One" 
+                         class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                         onerror="this.onerror=null;this.src='https://placehold.co/600x400/0A0F1E/E1E1E6?text=Image+Not+Found';">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Project Title One</h3>
+                        <p class="text-gray-300 mb-4">A brief, compelling description of the project, the problem it solves, and its impact.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="font-mono-plex text-xs bg-gray-700/50 text-cyan-300 px-2 py-1 rounded">Java</span>
+                            <span class="font-mono-plex text-xs bg-gray-700/50 text-cyan-300 px-2 py-1 rounded">React</span>
+                        </div>
+                        <a href="#" class="font-bold text-cyan-400 hover:underline">View Case Study &rarr;</a>
+                    </div>
+                </div>
+                <div class="glass-effect rounded-2xl overflow-hidden project-card group">
+                    <img src="https://placehold.co/600x400/0A0F1E/00F5D4?text=Project+Two" 
+                         alt="Project Two" 
+                         class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                         onerror="this.onerror=null;this.src='https://placehold.co/600x400/0A0F1E/E1E1E6?text=Image+Not+Found';">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Project Title Two</h3>
+                        <p class="text-gray-300 mb-4">This project focused on backend architecture, creating a scalable microservices-based system.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="font-mono-plex text-xs bg-gray-700/50 text-cyan-300 px-2 py-1 rounded">Spring Boot</span>
+                            <span class="font-mono-plex text-xs bg-gray-700/50 text-cyan-300 px-2 py-1 rounded">Docker</span>
+                            <span class="font-mono-plex text-xs bg-gray-700/50 text-cyan-300 px-2 py-1 rounded">PostgreSQL</span>
+                        </div>
+                        <a href="#" class="font-bold text-cyan-400 hover:underline">View on GitHub &rarr;</a>
+                    </div>
+                </div>
+                <div class="glass-effect rounded-2xl overflow-hidden project-card group">
+                     <img src="https://placehold.co/600x400/0A0F1E/00F5D4?text=Project+Three" 
+                          alt="Project Three" 
+                          class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          onerror="this.onerror=null;this.src='https://placehold.co/600x400/0A0F1E/E1E1E6?text=Image+Not+Found';">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Project Title Three</h3>
+                        <p class="text-gray-300 mb-4">An interactive data visualization piece built to explore complex datasets in an intuitive way.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="font-mono-plex text-xs bg-gray-700/50 text-cyan-300 px-2 py-1 rounded">Three.js</span>
+                            <span class="font-mono-plex text-xs bg-gray-700/50 text-cyan-300 px-2 py-1 rounded">JavaScript</span>
+                        </div>
+                        <a href="#" class="font-bold text-cyan-400 hover:underline">See Live Demo &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certifications Section -->
+        <section id="certifications" class="py-20 lg:py-32 fade-in-section">
+            <h2 class="text-3xl lg:text-4xl font-bold text-center mb-12">Credentials & Certifications</h2>
+            <!-- EASY EDIT: This container for the badge gallery has been updated with a background and padding. -->
+            <div class="glass-effect rounded-2xl p-6 md:p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                
+                <!-- CERTIFICATION ITEM 1 -->
+                <div class="gallery-item cursor-pointer group" 
+                     data-img-src="Certificates/email_security_associate.png" 
+                     data-title="OPSWAT Email Security Associate (OESA)" 
+                     data-issuer="OPSWAT" 
+                     data-verify-url="https://www.credly.com/users/varshith-jakkaraju.3a258dc7">
+                    <img src="https://images.credly.com/size/680x680/images/29f296fa-3b5e-466e-b9d2-76dd676c98fd/image.png" 
+                         alt="Certification Badge" 
+                         class="w-full h-auto rounded-lg bg-black/20 p-4 transform group-hover:scale-110 transition-transform duration-300"
+                         onerror="this.onerror=null;this.src='https://placehold.co/200x200/0A0F1E/E1E1E6?text=Image+Not+Found';">
+                </div>
+
+                <!-- CERTIFICATION ITEM 2 -->
+                <div class="gallery-item cursor-pointer group" 
+                     data-img-src="https://placehold.co/800x600/0A0F1E/00F5D4?text=Certificate+2" 
+                     data-title="Another Certification" 
+                     data-issuer="Another Organization" 
+                     data-verify-url="https://www.credly.com/users/varshith-jakkaraju.3a258dc7">
+                    <img src="https://placehold.co/200x200/0A0F1E/00F5D4?text=Badge+2" 
+                         alt="Certification Badge" 
+                         class="w-full h-auto rounded-lg bg-black/20 p-4 transform group-hover:scale-110 transition-transform duration-300"
+                         onerror="this.onerror=null;this.src='https://placehold.co/200x200/0A0F1E/E1E1E6?text=Image+Not+Found';">
+                </div>
+
+                <!-- CERTIFICATION ITEM 3 -->
+                 <div class="gallery-item cursor-pointer group" 
+                     data-img-src="https://placehold.co/800x600/0A0F1E/00F5D4?text=Certificate+3" 
+                     data-title="More Credentials" 
+                     data-issuer="Yet Another Organization" 
+                     data-verify-url="https://www.credly.com/users/varshith-jakkaraju.3a258dc7">
+                    <img src="https://placehold.co/200x200/0A0F1E/00F5D4?text=Badge+3" 
+                         alt="Certification Badge" 
+                         class="w-full h-auto rounded-lg bg-black/20 p-4 transform group-hover:scale-110 transition-transform duration-300"
+                         onerror="this.onerror=null;this.src='https://placehold.co/200x200/0A0F1E/E1E1E6?text=Image+Not+Found';">
+                </div>
+
+                 <!-- CERTIFICATION ITEM 4 -->
+                 <div class="gallery-item cursor-pointer group" 
+                     data-img-src="https://placehold.co/800x600/0A0F1E/00F5D4?text=Certificate+4" 
+                     data-title="Fourth Certificate" 
+                     data-issuer="Final Organization" 
+                     data-verify-url="https://www.credly.com/users/varshith-jakkaraju.3a258dc7">
+                    <img src="https://placehold.co/200x200/0A0F1E/00F5D4?text=Badge+4" 
+                         alt="Certification Badge" 
+                         class="w-full h-auto rounded-lg bg-black/20 p-4 transform group-hover:scale-110 transition-transform duration-300"
+                         onerror="this.onerror=null;this.src='https://placehold.co/200x200/0A0F1E/E1E1E6?text=Image+Not+Found';">
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Achievements Section -->
+        <section id="achievements" class="py-20 lg:py-32 fade-in-section">
+            <h2 class="text-3xl lg:text-4xl font-bold text-center mb-12">Beyond the Code: Initiatives & Achievements</h2>
+            <div class="space-y-8 max-w-4xl mx-auto">
+                <div class="glass-effect rounded-2xl p-6 project-card group">
+                    <div class="flex flex-col md:flex-row gap-4 items-center">
+                        <div class="w-full md:w-2/3">
+                            <h3 class="text-xl font-bold mb-1 accent-color">Hackathon / Event Name</h3>
+                            <p class="text-gray-300">A brief description of the event, your role, and what your team built or accomplished. Highlight key technologies or creative solutions used.</p>
+                        </div>
+                        <div class="w-full md:w-1/3 text-left md:text-right">
+                             <span class="font-mono-plex text-sm text-cyan-300 block">1st Place Winner</span>
+                             <span class="font-mono-plex text-xs text-gray-400 block">Date of Event</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-effect rounded-2xl p-6 project-card group">
+                    <div class="flex flex-col md:flex-row gap-4 items-center">
+                        <div class="w-full md:w-2/3">
+                            <h3 class="text-xl font-bold mb-1 accent-color">Volunteering Initiative</h3>
+                            <p class="text-gray-300">Describe the organization and the work you did. Focus on the impact of your contributions and any skills you developed or demonstrated.</p>
+                        </div>
+                        <div class="w-full md:w-1/3 text-left md:text-right">
+                             <span class="font-mono-plex text-sm text-cyan-300 block">Role / Position</span>
+                             <span class="font-mono-plex text-xs text-gray-400 block">Date or Duration</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 lg:py-32 text-center fade-in-section">
+            <h2 class="text-3xl lg:text-4xl font-bold">Let's Build Together</h2>
+            <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-300">
+                I'm currently available for freelance projects and open to new opportunities. If you have an idea you'd like to discuss, feel free to reach out.
+            </p>
+            <a href="mailto:your-email@example.com" class="mt-10 inline-block px-8 py-4 border-2 border-accent-color text-accent-color font-bold rounded-lg hover:bg-accent-color hover:text-gray-900 transform transition-all duration-300">
+                Get In Touch
+            </a>
+        </section>
+
+    </main>
+    
+    <!-- Modal for Expanded Certificate View -->
+    <div id="certificate-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" id="modal-bg"></div>
+        <div class="relative glass-effect rounded-lg max-w-3xl w-11/12 p-4 md:p-6 m-4 flex flex-col items-center text-center">
+            <button id="modal-close-button" class="absolute -top-3 -right-3 text-white bg-cyan-500 rounded-full h-8 w-8 flex items-center justify-center hover:bg-cyan-400 transition-colors">&times;</button>
+            <img id="modal-img" src="" alt="Expanded Certificate View" class="w-full h-auto object-contain rounded-md mb-4 max-h-[60vh]">
+            <h3 id="modal-title" class="text-xl md:text-2xl font-bold"></h3>
+            <p id="modal-issuer" class="text-gray-400 mb-4"></p>
+            <a id="modal-verify-link" href="#" target="_blank" class="font-bold text-cyan-400 hover:underline mt-auto">Verify Credential &rarr;</a>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 mt-20">
+        <div class="container mx-auto px-6 py-6 text-center text-gray-400">
+            <p>&copy; 2025 Varshith Jakkaraju. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- 3D HERO ANIMATION (THREE.JS) ---
+        const canvas = document.getElementById('hero-canvas');
+        if (canvas) {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const particlesGeometry = new THREE.BufferGeometry;
+            const particlesCount = 5000;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.015,
+                color: '#00F5D4'
+            });
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+
+            camera.position.z = 5;
+
+            let mouseX = 0;
+            let mouseY = 0;
+            document.addEventListener('mousemove', (event) => {
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+
+            const clock = new THREE.Clock();
+            const animate = () => {
+                const elapsedTime = clock.getElapsedTime();
+                
+                particlesMesh.rotation.y = -elapsedTime * 0.05;
+                particlesMesh.rotation.x = -elapsedTime * 0.02;
+
+                camera.position.x += (mouseX / window.innerWidth * 2 - 1 - camera.position.x) * 0.02;
+                camera.position.y += (-(mouseY / window.innerHeight * 2 - 1) - camera.position.y) * 0.02;
+
+                renderer.render(scene, camera);
+                window.requestAnimationFrame(animate);
+            };
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            });
+            
+            animate();
+        }
+
+        // --- FADE-IN SECTIONS ON SCROLL ---
+        const sections = document.querySelectorAll('.fade-in-section');
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+        
+        // --- HEADER SCROLL EFFECT ---
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('glass-effect');
+            } else {
+                header.classList.remove('glass-effect');
+            }
+        });
+
+        // --- MOBILE MENU TOGGLE ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
+
+        const toggleMenu = () => {
+            mobileMenu.classList.toggle('hidden');
+        };
+        
+        mobileMenuButton.addEventListener('click', toggleMenu);
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+
+        // --- CERTIFICATE MODAL LOGIC ---
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const modal = document.getElementById('certificate-modal');
+        if (modal) {
+            const modalImg = document.getElementById('modal-img');
+            const modalTitle = document.getElementById('modal-title');
+            const modalIssuer = document.getElementById('modal-issuer');
+            const modalVerifyLink = document.getElementById('modal-verify-link');
+            const modalCloseButton = document.getElementById('modal-close-button');
+            const modalBg = document.getElementById('modal-bg');
+
+            galleryItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    modalImg.src = item.dataset.imgSrc;
+                    modalTitle.textContent = item.dataset.title;
+                    modalIssuer.textContent = item.dataset.issuer;
+                    modalVerifyLink.href = item.dataset.verifyUrl;
+                    
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                });
+            });
+
+            const closeModal = () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            };
+
+            modalCloseButton.addEventListener('click', closeModal);
+            modalBg.addEventListener('click', closeModal);
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+        }
+    });
+    </script>
+</body>
+</html>
